@@ -1,16 +1,15 @@
-# This is a sample Python script.
+# Made by P17172, P17168, P17164
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import os
+import sys
+
+from constants import *
+
+# Get the sound file path from the user
+filePath = input(INPUT_FILE)
+# Check if file exists
+if os.path.exists(filePath) is False:
+    sys.exit(FILE_NOT_FOUND + str(filePath))
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
