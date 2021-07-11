@@ -25,7 +25,7 @@ if extension not in AUDIO_FILE_EXTENSIONS:
 signal, sample_rate = librosa.load(file_path)
 
 # Remove the background noise from the audio file.
-signal_reduced_noise = remove_noise(file_path, signal, sample_rate)
+signal_reduced_noise = remove_noise(signal, sample_rate)
 
 # Remove the silent parts of the audio that are less than 40dB
 signal_trimmed, i = librosa.effects.trim(signal_reduced_noise, TOP_DB)
