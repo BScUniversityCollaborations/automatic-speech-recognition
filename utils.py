@@ -17,33 +17,24 @@ def remove_noise(signal_data, sample_rate):
 
     show_plots(signal_data, signal_reduced_noise, sample_rate)
 
-    # sample_rate, samples = wavfile.read(file_path)
-    # frequencies, times, spectrogram = sg.spectrogram(signal, sample_rate)
-    #
-    # plt.pcolormesh(times, frequencies, spectrogram)
-    # plt.imshow(spectrogram)
-    # plt.ylabel('Frequency [Hz]')
-    # plt.xlabel('Time [sec]')
-    # plt.show()
-
-    # Make plots
-    # plt.subplot(211)
-    # plt.title('Spectrogram of audio file')
-    # plt.legend(['Original', 'Filtered Noise'])
-    # plt.xlabel('Sample')
-    # plt.ylabel('Amplitude')
-    #
-    # plt.subplot(212)
-    # plt.specgram(signal_reduced_noise, Fs=freq_sampling)
-    # plt.xlabel('Time')
-    # plt.ylabel('Frequency')
-    # plt.show()
-
     return signal_reduced_noise
 
 
 def show_plots(signal_data, signal_data_reduced, sample_rate):
-    plt.figure(1)
-    plt.title('Waveform')
-    librosa.display.waveshow(signal_data_reduced, sr=sample_rate)
+    fig, (ax, ax2) = plt.subplots(nrows=2, sharex="all", constrained_layout=True)
+
+    ax.set(title="Original Audio Waveform Graph", xlabel="Time", ylabel="Amplitude")
+    ax2.set(title="Audio Waveform Graph", xlabel="Time", ylabel="Amplitude")
+
+    ax.grid()
+    ax2.grid()
+
+    librosa.display.waveshow(signal_data, sr=sample_rate, ax=ax, label="Original")
+    librosa.display.waveshow(signal_data, sr=sample_rate, ax=ax2, label="Original")
+    librosa.display.waveshow(signal_data_reduced, sr=sample_rate, ax=ax2, label="Filtered")
+
+    ax2.legend()
+
     plt.show()
+
+    # fig.savefig("test.png")
