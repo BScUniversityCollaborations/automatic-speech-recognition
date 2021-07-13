@@ -16,10 +16,12 @@ TXT_PRE_EMPHASIZED_SIGNAL = "Pre-Emphasized Signal"
 TXT_DECIBELS = "Decibels (dB)"
 TXT_ORIGINAL = "Original"
 TXT_FILTERED = "Filtered"
+TXT_STE = "STE"
 TXT_ZERO_CROSSING_RATE = "Zero-Crossing Rate"
 TXT_SHORT_TIME_ENERGY = "Short-Time Energy"
 
 # === Variables ===
 TOP_DB = 40
 DEFAULT_SAMPLE_RATE = 16000
-AUDIO_FILE_EXTENSIONS = (".flac", ".mp3", ".wav", ".wma", ".aac", ".m4a")
+# AUDIO_FILE_EXTENSIONS = (".flac", ".mp3", ".wav", ".wma", ".aac", ".m4a")
+AUDIO_WAV_EXTENSION = ".wav"
