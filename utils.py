@@ -1,11 +1,8 @@
-import librosa
 import librosa.display
-import numpy as np
-import scipy.signal as sg
-from matplotlib import pyplot as plt
-from numpy.lib import stride_tricks
-from plots import *
+import soundfile as sf
+
 from constants import *
+from plots import *
 
 
 def pre_processing(signal_data):
@@ -25,6 +22,8 @@ def pre_processing(signal_data):
     zcr_average = np.mean(signal_zcr)
 
     show_plot_zcr(signal_zcr)
+
+    sf.write(".\\data\\samples\\sample_filtered.wav", signal_trimmed, DEFAULT_SAMPLE_RATE)
 
     # Print statistics
     print(TXT_LINE, "\n")
