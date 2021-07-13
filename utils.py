@@ -1,7 +1,7 @@
 import librosa.display
 import scipy
 import soundfile as sf
-import scipy.signal
+import scipy.signal as sg
 
 from constants import *
 from plots import *
@@ -10,12 +10,10 @@ from plots import *
 def pre_processing(signal_data):
     # === Pre-Emphasis ===
     signal_emphasized = librosa.effects.preemphasis(signal_data)
-    show_plot_emphasized(signal_data, signal_emphasized)
 
     # === Filtering ===
     # Remove the background noise from the audio file.
     signal_reduced_noise = remove_noise(signal_data)
-    show_plots_compare_two_signals(signal_data, signal_reduced_noise)
 
     # Remove the silent parts of the audio that are less than 40dB
     signal_trimmed, i = librosa.effects.trim(signal_reduced_noise, TOP_DB)
@@ -23,9 +21,17 @@ def pre_processing(signal_data):
     signal_zcr = librosa.feature.zero_crossing_rate(signal_trimmed)
     zcr_average = np.mean(signal_zcr)
 
+    signal_short_time_energy = calculate_short_time_energy(signal_trimmed)
+
+    # Show plots
+    show_plot_emphasized(signal_data, signal_emphasized)
+    show_plots_compare_two_signals(signal_data, signal_reduced_noise)
     show_plot_zcr(signal_zcr)
 
+    # Exporting the filtered audio file.
     sf.write(".\\data\\samples\\sample_filtered.wav", signal_trimmed, DEFAULT_SAMPLE_RATE)
+
+    print(signal_short_time_energy)
 
     # Print statistics
     print(TXT_LINE, "\n")
@@ -49,10 +55,18 @@ def remove_noise(signal_data):
     return signal_reduced_noise
 
 
-def ste(x, win):
-    # Compute short-time energy
+def calculate_short_time_energy(signal_data):
+
+    signal = np.array(signal_data, dtype=float)
+    win = sg.get_window("hamming", 301)
+
     if isinstance(win, str):
-        win = scipy.signal.get_window(win, max(1, len(x) // 8))
+        win = sg.get_window(win, max(1, len(signal) // 8))
     win = win / len(win)
 
-    return scipy.signal.convolve(x ** 2, win ** 2, mode="same")
+    signal_short_time_energy = sg.convolve(signal ** 2, win ** 2, mode="same")
+
+    # Show plots
+    show_plot_short_time_energy(signal, signal_short_time_energy)
+
+    return signal_short_time_energy
