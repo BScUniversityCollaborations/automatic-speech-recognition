@@ -27,11 +27,10 @@ def pre_processing(signal_data):
     show_plot_emphasized(signal_data, signal_emphasized)
     show_plots_compare_two_signals(signal_data, signal_reduced_noise)
     show_plot_zcr(signal_zcr)
+    show_plot_short_time_energy(signal_trimmed, signal_short_time_energy)
 
     # Exporting the filtered audio file.
     sf.write(".\\data\\samples\\sample_filtered.wav", signal_trimmed, DEFAULT_SAMPLE_RATE)
-
-    print(signal_short_time_energy)
 
     # Print statistics
     print(TXT_LINE, "\n")
@@ -65,8 +64,5 @@ def calculate_short_time_energy(signal_data):
     win = win / len(win)
 
     signal_short_time_energy = sg.convolve(signal ** 2, win ** 2, mode="same")
-
-    # Show plots
-    show_plot_short_time_energy(signal, signal_short_time_energy)
 
     return signal_short_time_energy
