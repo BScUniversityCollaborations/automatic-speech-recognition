@@ -54,7 +54,7 @@ def show_plot_zcr(signal_data_zcr):
     plt.plot(signal_data_zcr[0])
 
     # Set title
-    plt.title("ZCR")
+    plt.title(TXT_ZERO_CROSSING_RATE)
     # Apply grid
     plt.grid()
     # Zooming in

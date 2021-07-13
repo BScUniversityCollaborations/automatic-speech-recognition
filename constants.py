@@ -16,6 +16,7 @@ TXT_PRE_EMPHASIZED_SIGNAL = "Pre-Emphasized Signal"
 TXT_DECIBELS = "Decibels (dB)"
 TXT_ORIGINAL = "Original"
 TXT_FILTERED = "Filtered"
+TXT_ZERO_CROSSING_RATE = "Zero-Crossing Rate"
 
 # === Variables ===
 TOP_DB = 40
