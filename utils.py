@@ -55,4 +55,4 @@ def ste(x, win):
         win = scipy.signal.get_window(win, max(1, len(x) // 8))
     win = win / len(win)
 
-    return  scipy.signal.convolve(x ** 2, win ** 2, mode="same")
+    return scipy.signal.convolve(x ** 2, win ** 2, mode="same")

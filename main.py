@@ -28,7 +28,7 @@ pre_processing(signal)
 # Find the short time energy.
 sr = numpy.array(sr, dtype=float)
 ex_print_signal = ste(sr, scipy.signal.get_window("hamming", 201))  # todo να τυπώσουμε στο σωστό τοπο την γραφική
-show_plot_short_time_energy(ex_print_signal)
+print("The short time energy: " + ex_print_signal)
 
 # todo remove this
 # sf.write("test.wav", signal_trimmed, sample_rate)
