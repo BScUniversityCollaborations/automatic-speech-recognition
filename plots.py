@@ -63,9 +63,10 @@ def show_plot_zcr(signal_data_zcr):
     # Show plot
     plt.show()
 
-def show_plot_short_time_energy(signal_data_orig, signal_data_short):
 
-    plt.plot(signal_data_short[0])
+def show_plot_short_time_energy(signal_data_short):
+#todo να μπει και το κανονικό σήμα
+    plt.plot(signal_data_short)
 
     # Set title
     plt.title(TXT_SHORT_TIME_ENERGY)

@@ -22,13 +22,13 @@ if extension not in AUDIO_FILE_EXTENSIONS:
 # Load the file from path, then get the signal and sample rate.
 signal, sr = librosa.load(file_path, sr=DEFAULT_SAMPLE_RATE)
 
-
 # === Start Pre-Processing ===
 pre_processing(signal)
 
 # Find the short time energy.
 sr = numpy.array(sr, dtype=float)
-ste(sr, scipy.signal.get_window("hamming", 201))
+ex_print_signal = ste(sr, scipy.signal.get_window("hamming", 201))  # todo να τυπώσουμε στο σωστό τοπο την γραφική
+show_plot_short_time_energy(ex_print_signal)
 
 # todo remove this
 # sf.write("test.wav", signal_trimmed, sample_rate)
