@@ -17,6 +17,7 @@ TXT_DECIBELS = "Decibels (dB)"
 TXT_ORIGINAL = "Original"
 TXT_FILTERED = "Filtered"
 TXT_ZERO_CROSSING_RATE = "Zero-Crossing Rate"
+TXT_SHORT_TIME_ENERGY = "Short-Time Energy"
 
 # === Variables ===
 TOP_DB = 40
