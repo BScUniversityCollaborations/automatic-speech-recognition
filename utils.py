@@ -1,5 +1,7 @@
 import librosa.display
+import scipy
 import soundfile as sf
+import scipy.signal
 
 from constants import *
 from plots import *
@@ -46,3 +48,10 @@ def remove_noise(signal_data):
 
     return signal_reduced_noise
 
+
+def ste(x, win):
+    # Compute short-time energy
+    if isinstance(win, str):
+        win = scipy.signal.get_window(win, max(1, len(x) // 8))
+    win = win / len(win)
+    return scipy.signal.convolve(x ** 2, win ** 2, mode="same")
