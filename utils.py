@@ -4,9 +4,39 @@ import numpy as np
 import scipy.signal as sg
 from matplotlib import pyplot as plt
 from numpy.lib import stride_tricks
+from plots import *
+from constants import *
 
 
-def remove_noise(signal_data, sample_rate):
+def pre_processing(signal_data):
+    # === Pre-Emphasis ===
+    signal_emphasized = librosa.effects.preemphasis(signal_data)
+    show_plot_emphasized(signal_data, signal_emphasized)
+
+    # === Filtering ===
+    # Remove the background noise from the audio file.
+    signal_reduced_noise = remove_noise(signal_data)
+    show_plots_compare_two_signals(signal_data, signal_reduced_noise)
+
+    # Remove the silent parts of the audio that are less than 40dB
+    signal_trimmed, i = librosa.effects.trim(signal_reduced_noise, TOP_DB)
+
+    signal_zcr = librosa.feature.zero_crossing_rate(signal_trimmed)
+    zcr_average = np.mean(signal_zcr)
+
+    show_plot_zcr(signal_zcr)
+
+    # Print statistics
+    print(TXT_LINE, "\n")
+    print(TXT_STATISTICS)
+    print(TXT_ORIGINAL_AUDIO_SAMPLE_RATE.format(DEFAULT_SAMPLE_RATE))
+    print(TXT_ORIGINAL_AUDIO_DURATION_FORMAT.format(librosa.get_duration(signal_data)))
+    print(TXT_TRIMMED_AUDIO_DURATION_FORMAT.format(librosa.get_duration(signal_trimmed)))
+    print(TXT_ZCR_AVERAGE.format(zcr_average), "\n")
+    print(TXT_LINE)
+
+
+def remove_noise(signal_data):
     # Butterworth filter
     n = 1  # Filter order
     wn = 0.15  # Cutoff frequency
@@ -15,26 +45,5 @@ def remove_noise(signal_data, sample_rate):
     # Applying the filter
     signal_reduced_noise = sg.filtfilt(btype, analog, signal_data)
 
-    show_plots(signal_data, signal_reduced_noise, sample_rate)
-
     return signal_reduced_noise
 
-
-def show_plots(signal_data, signal_data_reduced, sample_rate):
-    fig, (ax, ax2) = plt.subplots(nrows=2, sharex="all", constrained_layout=True)
-
-    ax.set(title="Original Audio Waveform Graph", xlabel="Time", ylabel="Amplitude")
-    ax2.set(title="Audio Waveform Graph", xlabel="Time", ylabel="Amplitude")
-
-    ax.grid()
-    ax2.grid()
-
-    librosa.display.waveshow(signal_data, sr=sample_rate, ax=ax, label="Original")
-    librosa.display.waveshow(signal_data, sr=sample_rate, ax=ax2, label="Original")
-    librosa.display.waveshow(signal_data_reduced, sr=sample_rate, ax=ax2, label="Filtered")
-
-    ax2.legend()
-
-    plt.show()
-
-    # fig.savefig("test.png")
