@@ -64,9 +64,13 @@ def show_plot_zcr(signal_data_zcr):
     plt.show()
 
 
-def show_plot_short_time_energy(signal_data_short):
-#todo να μπει και το κανονικό σήμα
-    plt.plot(signal_data_short)
+def show_plot_short_time_energy(signal_data_original, signal_data_ste):
+    time = np.arange(len(signal_data_original)) * (1.0 / DEFAULT_SAMPLE_RATE)
 
-    # Set title
+    plt.figure()
+    plt.plot(time, signal_data_ste, 'm', linewidth=2)
+    plt.legend([TXT_ORIGINAL, TXT_STE])
     plt.title(TXT_SHORT_TIME_ENERGY)
+    plt.xlabel(TXT_TIME)
+
+    plt.show()
