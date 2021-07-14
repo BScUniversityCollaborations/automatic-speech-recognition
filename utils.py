@@ -77,7 +77,7 @@ def calculate_short_time_energy(signal_data):
 
 
 def digits_segmentation(signals):
-    y = signals
+
     # duration = librosa.get_duration(y, sr=DEFAULT_SAMPLE_RATE)  # διαρκεια ήχουν
     signal_reverse = signals[::-1]  # αντιστροφη σηματος
     frame_duration_length = 0.03  # το μήκος ενός πλαισίου πλαισίου στο σήμα
@@ -86,7 +86,7 @@ def digits_segmentation(signals):
     frame_length = round(frame_duration_length * DEFAULT_SAMPLE_RATE)  # frame length
     frame_step = round(frame_step * DEFAULT_SAMPLE_RATE)  # sliding step
 
-    frames = librosa.onset.onset_detect(y, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length, backtrack=True)
+    frames = librosa.onset.onset_detect(signals, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length, backtrack=True)
     times = librosa.frames_to_time(frames, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length)
     samples = librosa.frames_to_samples(frames, frame_length)
 
