@@ -1,13 +1,17 @@
-# === Lang ===
+# region Lang
+# Console
 TXT_INPUT_FILE = "Enter sound file path:\n"
 TXT_FILE_NOT_FOUND = "File not found at:\n"
 TXT_FILE_WRONG_EXTENSION = "Wrong file extension. Please try again!\n"
-TXT_STATISTICS = "STATISTICS:"
-TXT_ORIGINAL_AUDIO_DURATION_FORMAT = "- Original Audio Duration: {}"
-TXT_TRIMMED_AUDIO_DURATION_FORMAT = "- Audio (With No Silent Parts) Duration: {}"
+TXT_PRE_PROCESSING_STATISTICS = "PRE-PROCESSING STATISTICS:"
+TXT_AUDIO_ORIGINAL_DURATION_FORMAT = "- Original Audio Duration: {} sec."
+TXT_AUDIO_FILTERED_DURATION_FORMAT = "- Audio (Filtered) Duration: {} sec."
 TXT_ORIGINAL_AUDIO_SAMPLE_RATE = "- Sample Rate: {}"
 TXT_ZCR_AVERAGE = "- Average ZCR: {}"
+TXT_DIGITS_FOUND = "[!] Digits Found: {}"
+TXT_DIGITS_LIST = "Digits Recognized:\n"
 TXT_LINE = "==============================================="
+# Plot
 TXT_AMPLITUDE = "Amplitude"
 TXT_TIME = "Time (s)"
 TXT_FREQUENCY = "Frequency (Hz)"
@@ -19,9 +23,16 @@ TXT_FILTERED = "Filtered"
 TXT_STE = "STE"
 TXT_ZERO_CROSSING_RATE = "Zero-Crossing Rate"
 TXT_SHORT_TIME_ENERGY = "Short-Time Energy"
+# endregion
 
-# === Variables ===
+
+# region Variables
+# Remove signal part if dB is less than 40
 TOP_DB = 40
 DEFAULT_SAMPLE_RATE = 16000
-# AUDIO_FILE_EXTENSIONS = (".flac", ".mp3", ".wav", ".wma", ".aac", ".m4a")
 AUDIO_WAV_EXTENSION = ".wav"
+# window length in sec. Default is 0.03.
+WINDOW_LENGTH = 0.03
+# step between successive windows in sec. Default is 0.01.
+WINDOW_HOP = 0.01
+# endregion

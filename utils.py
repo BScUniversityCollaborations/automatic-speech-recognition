@@ -17,45 +17,40 @@ def pre_processing(signal_data, file_name):
     signal_reduced_noise = remove_noise(signal_data)
 
     # Remove the silent parts of the audio that are less than 40dB
-    signal_trimmed, i = librosa.effects.trim(signal_reduced_noise, TOP_DB)
+    signal_filtered, i = librosa.effects.trim(signal_reduced_noise, TOP_DB)
 
-    signal_zcr = librosa.feature.zero_crossing_rate(signal_trimmed)
+    signal_zcr = librosa.feature.zero_crossing_rate(signal_filtered)
     zcr_average = np.mean(signal_zcr)
 
-    signal_short_time_energy = calculate_short_time_energy(signal_trimmed)
+    signal_short_time_energy = calculate_short_time_energy(signal_filtered)
 
     # Show plots
     show_plot_emphasized(signal_data, signal_emphasized)
     show_plots_compare_two_signals(signal_data, signal_reduced_noise)
     show_plot_zcr(signal_zcr)
-    show_plot_short_time_energy(signal_trimmed, signal_short_time_energy)
+    show_plot_short_time_energy(signal_filtered, signal_short_time_energy)
 
     # Exporting the filtered audio file.
     filtered_file_path = ".\\data\\samples\\" + file_name + "_filtered.wav"
-    sf.write(filtered_file_path, signal_trimmed, DEFAULT_SAMPLE_RATE)
+    sf.write(filtered_file_path, signal_filtered, DEFAULT_SAMPLE_RATE)
 
     # Print statistics
     print(TXT_LINE, "\n")
-    print(TXT_STATISTICS)
+    print(TXT_PRE_PROCESSING_STATISTICS)
     print(TXT_ORIGINAL_AUDIO_SAMPLE_RATE.format(DEFAULT_SAMPLE_RATE))
-    print(TXT_ORIGINAL_AUDIO_DURATION_FORMAT.format(librosa.get_duration(signal_data)))
-    print(TXT_TRIMMED_AUDIO_DURATION_FORMAT.format(librosa.get_duration(signal_trimmed)))
+    print(TXT_AUDIO_ORIGINAL_DURATION_FORMAT.format(
+        round(librosa.get_duration(signal_data, sr=DEFAULT_SAMPLE_RATE), 2))
+    )
+    print(TXT_AUDIO_FILTERED_DURATION_FORMAT.format(
+        round(librosa.get_duration(signal_filtered, sr=DEFAULT_SAMPLE_RATE), 2))
+    )
     print(TXT_ZCR_AVERAGE.format(zcr_average), "\n")
     print(TXT_LINE)
 
-    return signal_trimmed
+    return signal_filtered
 
 
 def remove_noise(signal_data):
-    # Butterworth filter
-    # n = 1  # Filter order
-    # wn = 0.15  # Cutoff frequency
-    # btype, analog = sg.butter(n, wn, output='ba')
-    #
-    # # Applying the filter
-    # signal_reduced_noise = sg.filtfilt(btype, analog, signal_data)
-
-    # perform noise reduction
     reduced_noise = nr.reduce_noise(audio_clip=signal_data,
                                     noise_clip=signal_data,
                                     verbose=False)
@@ -76,17 +71,15 @@ def calculate_short_time_energy(signal_data):
     return signal_short_time_energy
 
 
-def digits_segmentation(signals):
+def digits_segmentation(signal_nparray):
 
-    # duration = librosa.get_duration(y, sr=DEFAULT_SAMPLE_RATE)  # διαρκεια ήχουν
-    signal_reverse = signals[::-1]  # αντιστροφη σηματος
-    frame_duration_length = 0.03  # το μήκος ενός πλαισίου πλαισίου στο σήμα
-    frame_step = 0.01  # το ολισθαίνον βήμα μέσα σε αυτό το πλαίσιο για 10ms.
+    # We reverse the signal nparray.
+    signal_reverse = signal_nparray[::-1]
 
-    frame_length = round(frame_duration_length * DEFAULT_SAMPLE_RATE)  # frame length
-    frame_step = round(frame_step * DEFAULT_SAMPLE_RATE)  # sliding step
+    frame_length = round(WINDOW_LENGTH * DEFAULT_SAMPLE_RATE)
+    win_hop = round(WINDOW_HOP * DEFAULT_SAMPLE_RATE)
 
-    frames = librosa.onset.onset_detect(signals, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length, backtrack=True)
+    frames = librosa.onset.onset_detect(signal_nparray, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length, backtrack=True)
     times = librosa.frames_to_time(frames, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length)
     samples = librosa.frames_to_samples(frames, frame_length)
 
@@ -96,7 +89,7 @@ def digits_segmentation(signals):
 
     i = 0
     while i < len(times_reverse) - 1:
-        times_reverse[i] = frame_duration_length - times_reverse[i]
+        times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
         i += 1
 
     times_reverse = sorted(times_reverse)
@@ -122,33 +115,22 @@ def digits_segmentation(signals):
 
     samples = librosa.time_to_samples(merged_onset_times, sr=DEFAULT_SAMPLE_RATE)
 
-    # spectrograph with detected onset spots todo μεταφορα κωδικα στο Plots
-    plt.figure(5)
-    plt.title('Spectroscopy with points resulting from onset')
-    Y = librosa.stft(signals)
-    Yto_db = librosa.amplitude_to_db(abs(Y))
-    librosa.display.specshow(Yto_db, sr=DEFAULT_SAMPLE_RATE, x_axis='time', y_axis='hz')
-    plt.vlines(merged_onset_times, 0, 10000, color='k')
-    plt.show()
     return samples
 
 
-def digit_recognition(signals, samples):
+def digit_recognition(signal_data, samples):
     i = 0
     # number of valid digits from onset detection
     count_digits = 0
     digit = {}
     while i < len(samples):
         if i == len(samples) - 1 and len(samples) % 2 == 1:
-            digit[count_digits] = signals[samples[i - 1]:samples[
-                i]]  # ipd.Audio(y[onset_samples[i]:onset_samples[i+1]],rate = s)
+            digit[count_digits] = signal_data[samples[i - 1]:samples[
+                i]]
         else:
-            digit[count_digits] = signals[samples[i]:samples[
-                i + 1]]  # ipd.Audio(y[onset_samples[i]:onset_samples[i+1]],rate = s)
+            digit[count_digits] = signal_data[samples[i]:samples[
+                i + 1]]
         count_digits += 1
         i += 2
-    # song[numbSongs] = y[onset_samples[-1]:]#ipd.Audio(y[onset_samples[-1]:],rate = s)
-
-    print('Total digits: ', len(digit))
 
     return digit
