@@ -23,7 +23,6 @@ if extension not in AUDIO_WAV_EXTENSION:
 signal, sr = librosa.load(file_path, sr=DEFAULT_SAMPLE_RATE)
 
 # === Start Pre-Processing ===
-pre_processing(signal)
+pre_processing(signal, os.path.basename(root))
 
-# todo remove this
-# sf.write("test.wav", signal_trimmed, sample_rate)
+

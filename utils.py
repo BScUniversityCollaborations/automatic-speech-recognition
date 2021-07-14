@@ -2,12 +2,13 @@ import librosa.display
 import scipy
 import soundfile as sf
 import scipy.signal as sg
+import noisereduce as nr
 
 from constants import *
 from plots import *
 
 
-def pre_processing(signal_data):
+def pre_processing(signal_data, file_name):
     # === Pre-Emphasis ===
     signal_emphasized = librosa.effects.preemphasis(signal_data)
 
@@ -30,7 +31,8 @@ def pre_processing(signal_data):
     show_plot_short_time_energy(signal_trimmed, signal_short_time_energy)
 
     # Exporting the filtered audio file.
-    sf.write(".\\data\\samples\\sample_filtered.wav", signal_trimmed, DEFAULT_SAMPLE_RATE)
+    filtered_file_path = ".\\data\\samples\\" + file_name + "_filtered.wav"
+    sf.write(filtered_file_path, signal_trimmed, DEFAULT_SAMPLE_RATE)
 
     # Print statistics
     print(TXT_LINE, "\n")
@@ -44,14 +46,19 @@ def pre_processing(signal_data):
 
 def remove_noise(signal_data):
     # Butterworth filter
-    n = 1  # Filter order
-    wn = 0.15  # Cutoff frequency
-    btype, analog = sg.butter(n, wn, output='ba')
+    # n = 1  # Filter order
+    # wn = 0.15  # Cutoff frequency
+    # btype, analog = sg.butter(n, wn, output='ba')
+    #
+    # # Applying the filter
+    # signal_reduced_noise = sg.filtfilt(btype, analog, signal_data)
 
-    # Applying the filter
-    signal_reduced_noise = sg.filtfilt(btype, analog, signal_data)
+    # perform noise reduction
+    reduced_noise = nr.reduce_noise(audio_clip=signal_data,
+                                    noise_clip=signal_data,
+                                    verbose=False)
 
-    return signal_reduced_noise
+    return reduced_noise
 
 
 def calculate_short_time_energy(signal_data):
@@ -66,3 +73,11 @@ def calculate_short_time_energy(signal_data):
     signal_short_time_energy = sg.convolve(signal ** 2, win ** 2, mode="same")
 
     return signal_short_time_energy
+
+
+def digits_segmentation():
+    return
+
+
+def digit_recognition():
+    return
