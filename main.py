@@ -3,8 +3,7 @@
 import os
 import sys
 
-import numpy
-
+import utils
 from utils import *
 
 # Get the sound file path from the user
@@ -23,6 +22,7 @@ if extension not in AUDIO_WAV_EXTENSION:
 signal, sr = librosa.load(file_path, sr=DEFAULT_SAMPLE_RATE)
 
 # === Start Pre-Processing ===
-pre_processing(signal, os.path.basename(root))
+my_signal = pre_processing(signal, os.path.basename(root))
 
-
+my_samples = digits_segmentation(my_signal)
+digit_recognition(my_signal, my_samples)
