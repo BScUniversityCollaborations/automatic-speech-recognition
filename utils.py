@@ -120,12 +120,14 @@ def digit_recognition(signal_data, samples):
     # number of valid digits from onset detection TODO change the comment
     count_digits = 0
     digit = {}
-    while i < len(samples):
-        if i == len(samples) - 1 and len(samples) % 2 == 1:
+
+    # range(start_from, stop_at, step_size)
+    for i in range(0, len(samples), 2):
+        print(i)
+        if len(samples) % 2 == 1 and i == len(samples) - 1:
             digit[count_digits] = signal_data[samples[i - 1]:samples[i]]
         else:
             digit[count_digits] = signal_data[samples[i]:samples[i + 1]]
         count_digits += 1
-        i += 2
 
     return digit
