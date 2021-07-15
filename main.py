@@ -1,7 +1,6 @@
 # Made by P17172, P17168, P17164
 
 import os
-import sys
 
 from utils import *
 
@@ -40,6 +39,8 @@ samples = digits_segmentation(pre_proceed_signal)
 
 # === Feature extraction & word recognition ===
 digits_array = digit_recognition(pre_proceed_signal, samples)
+
+
 
 # === Display words a list of words found ===
 # Prints the list that contains all the words found and separates each word

@@ -1,7 +1,10 @@
+import math
+
 import librosa.display
 import noisereduce as nr
 import soundfile as sf
 import scipy.signal as sg
+from sklearn.model_selection import train_test_split
 
 from plots import *
 
@@ -15,7 +18,7 @@ def pre_processing(signal_data, file_name):
     signal_reduced_noise = remove_noise(signal_data)
 
     # Remove the silent parts of the audio that are less than 40dB
-    signal_filtered, i = librosa.effects.trim(signal_reduced_noise, TOP_DB)
+    signal_filtered, _ = librosa.effects.trim(signal_reduced_noise, TOP_DB)
 
     signal_zcr = librosa.feature.zero_crossing_rate(signal_filtered)
     zcr_average = np.mean(signal_zcr)
@@ -70,19 +73,16 @@ def calculate_short_time_energy(signal_data):
 
 
 def digits_segmentation(signal_nparray):
-
     # We reverse the signal nparray.
     signal_reverse = signal_nparray[::-1]
 
-    frame_length = round(WINDOW_LENGTH * DEFAULT_SAMPLE_RATE)
+    frames = librosa.onset.onset_detect(signal_nparray, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH, backtrack=True)
+    times = librosa.frames_to_time(frames, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
+    samples = librosa.frames_to_samples(frames, FRAME_LENGTH)
 
-    frames = librosa.onset.onset_detect(signal_nparray, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length, backtrack=True)
-    times = librosa.frames_to_time(frames, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length)
-    samples = librosa.frames_to_samples(frames, frame_length)
-
-    frames_reverse = librosa.onset.onset_detect(signal_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length,
+    frames_reverse = librosa.onset.onset_detect(signal_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH,
                                                 backtrack=True)
-    times_reverse = librosa.frames_to_time(frames_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length)
+    times_reverse = librosa.frames_to_time(frames_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
 
     i = 0
     while i < len(times_reverse) - 1:
@@ -117,7 +117,7 @@ def digits_segmentation(signal_nparray):
 
 def digit_recognition(signal_data, samples):
     i = 0
-    # number of valid digits from onset detection TODO change the comment
+    # number of valid digits from onset detection todo
     count_digits = 0
     digit = {}
 
@@ -131,3 +131,95 @@ def digit_recognition(signal_data, samples):
         count_digits += 1
 
     return digit
+
+
+def recognition(digits, signal_data, dataset):
+    # Init an array that will contain our recognized digits in string.
+    recognized_digits_array = []
+    for digit in digits:
+        mfcc_input = librosa.feature.mfcc(digit, signal_data, hop_length=FRAME_LENGTH, n_mfcc=13)
+        mfcc_input_mag = librosa.amplitude_to_db(abs(mfcc_input))
+
+        Dnew = []
+        mfccs = []
+        # 0-9 from training set
+        for i in range(len(dataset)):
+            # We basically filter the training dataset as well.
+            dataset[i] = filter_signal(dataset[i])
+            # MFCC for each digit from the training set
+            mfcc = librosa.feature.mfcc(dataset[i], signal_data, hop_length=80, n_mfcc=13)
+            # logarithm of the features ADDED
+            mfcc_mag = librosa.amplitude_to_db(abs(mfcc))
+            # apply dtw
+            D, wp = librosa.sequence.dtw(X=mfcc_input_mag, Y=mfcc_mag, metric='euclidean', backtrack=True)
+            # make a list with minimum cost of each digit
+            Dnew.append(D[-1, -1])
+            mfccs.append(mfcc_mag)
+
+        # index of MINIMUM COST
+        index = Dnew.index(min(Dnew))
+
+        show_mel_spectrogram()
+
+    return recognized_digits_array
+
+
+def get_training_samples_signal():
+    # Initialize an array to append the signals of the training samples.
+    training_samples_signals = []
+
+    # Loop between a range of 0-9, 0 in range(10) is 0 to 9 in python.
+    for i in range(10):
+        # Loop between the labels, s1 means sample1 and so on.
+        for name in DATASET_SPLIT_LABELS:
+            # Add the signal to our array.
+            training_samples_signals.append(librosa.load("\\data\\training\\"
+                                                         + str(i + 1)
+                                                         + "_"
+                                                         + name
+                                                         + AUDIO_WAV_EXTENSION,
+                                                         sr=DEFAULT_SAMPLE_RATE))
+
+    return training_samples_signals
+
+
+def filter_signal(signal_data):
+    # === Filtering ===
+    # Remove the background noise from the audio file.
+    signal_reduced_noise = remove_noise(signal_data)
+
+    # Remove the silent parts of the audio that are less than 40dB
+    signal_filtered, _ = librosa.effects.trim(signal_reduced_noise, TOP_DB)
+    # Remove the background noise from the audio file.
+    signal_reduced_noise = remove_noise(signal_data)
+
+    # Remove the silent parts of the audio that are less than 40dB
+    signal_filtered, _ = librosa.effects.trim(signal_reduced_noise, TOP_DB)
+
+    return signal_filtered
+
+
+def cross_validation(labels, mfcc):
+    training, testing = train_test_split(labels, test_size=0.3, shuffle=True)
+
+    D = np.ones((len(labels), len(labels))) * -1
+
+    score = 0.0
+    for i in range(len(testing)):
+        x = mfcc[i]
+        dmin, jmin = math.inf, -1
+
+        for j in range(len(training)):
+            y = mfccs[j]
+            d = D[i, j]
+
+            if d.all() == -1:
+                d = librosa.sequence.dtw(x, y)
+
+            if d.all() < dmin:
+                dmin = d
+                jmin = j
+
+        score += 1.0 if (labels[i] == labels[jmin]) else 0.0
+
+    print('Rec rate {}%'.format(100. * score / len(testing)))

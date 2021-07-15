@@ -21,6 +21,7 @@ TXT_FREQUENCY = "Frequency (Hz)"
 TXT_ORIGINAL_SIGNAL = "Original Signal"
 TXT_PRE_EMPHASIZED_SIGNAL = "Pre-Emphasized Signal"
 TXT_DECIBELS = "Decibels (dB)"
+TXT_MEL = "Mel Scale (Mel)"
 TXT_ORIGINAL = "Original"
 TXT_FILTERED = "Filtered"
 TXT_STE = "STE"
@@ -39,4 +40,6 @@ AUDIO_WAV_EXTENSION = ".wav"
 WINDOW_LENGTH = 0.03
 # step between successive windows in sec. Default is 0.01.
 WINDOW_HOP = 0.01
+FRAME_LENGTH = round(WINDOW_LENGTH * DEFAULT_SAMPLE_RATE)
+DATASET_SPLIT_LABELS = ["s1", "s2", "s3"]
 # endregion

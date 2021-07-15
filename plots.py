@@ -85,3 +85,20 @@ def show_plot_short_time_energy(signal_data_original, signal_data_ste):
 
     # Show the plot
     plt.show()
+
+
+def show_mel_spectrogram(signal_nparray, num):
+    # Calculating the Short-Time Fourier Transform of signal
+    spectrogram = librosa.stft(signal_nparray)
+    # Using the mel-scale instead of raw frequency
+    spectrogram_mag, _ = librosa.magphase(spectrogram)
+    mel_scale_spectrogram = librosa.feature.melspectrogram(S=spectrogram_mag, sr=DEFAULT_SAMPLE_RATE)
+    # use the decibel scale to get the final Mel Spectrogram
+    mel_spectrogram = librosa.amplitude_to_db(mel_scale_spectrogram, ref=np.min)
+    librosa.display.specshow(mel_scale_spectrogram, sr=DEFAULT_SAMPLE_RATE, x_axis=TXT_TIME, y_axis=TXT_MEL)
+    plt.colorbar(format='%+2.0f dB')
+
+    # Save plot to directory
+    plt.savefig(".\\data\\plots\\" + num + "_mel_spectrogram.png")
+
+    plt.show()
