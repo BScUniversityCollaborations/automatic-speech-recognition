@@ -117,7 +117,7 @@ def digits_segmentation(signal_nparray):
 
 def digit_recognition(signal_data, samples):
     i = 0
-    # number of valid digits from onset detection
+    # number of valid digits from onset detection TODO change the comment
     count_digits = 0
     digit = {}
     while i < len(samples):
