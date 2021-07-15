@@ -25,6 +25,10 @@ while True:
 
     break
 
+# if plots directory doesn't exists, create is so we save our plots.
+if os.path.exists(DIRECTORY_PLOTS) is False:
+    os.mkdir(DIRECTORY_PLOTS)
+
 # Load the file from path, then get the signal and sample rate.
 signal, sr = librosa.load(file_path, sr=DEFAULT_SAMPLE_RATE)
 
@@ -41,5 +45,5 @@ digits_array = digit_recognition(pre_proceed_signal, samples)
 # Prints the list that contains all the words found and separates each word
 # with a ", " excluding the last one.
 print(TXT_DIGITS_FOUND.format(len(digits_array)))
-print(TXT_DIGITS_RECOGNIZED)
+print("\n", TXT_DIGITS_RECOGNIZED)
 print(", ".join([str(i) for i in digits_array]))

@@ -12,7 +12,7 @@ TXT_AUDIO_FILTERED_DURATION_FORMAT = "- Audio (Filtered) Duration: {} sec."
 TXT_ORIGINAL_AUDIO_SAMPLE_RATE = "- Sample Rate: {}"
 TXT_ZCR_AVERAGE = "- Average ZCR: {}"
 TXT_DIGITS_FOUND = "[!] Total Digits Found: {}"
-TXT_DIGITS_RECOGNIZED = "Digits Recognized:\n"
+TXT_DIGITS_RECOGNIZED = "Digits Recognized:"
 TXT_LINE = "==============================================="
 # Plot
 TXT_AMPLITUDE = "Amplitude"
@@ -30,6 +30,7 @@ TXT_SHORT_TIME_ENERGY = "Short-Time Energy"
 
 
 # region Variables
+DIRECTORY_PLOTS = ".\\data\\plots"
 # Remove signal part if dB is less than 40
 TOP_DB = 40
 DEFAULT_SAMPLE_RATE = 16000
