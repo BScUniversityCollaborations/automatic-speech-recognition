@@ -34,5 +34,5 @@ digits_array = digit_recognition(pre_proceed_signal, samples)
 # Prints the list that contains all the words found and separates each word
 # with a ", " excluding the last one.
 print(TXT_DIGITS_FOUND.format(len(digits_array)))
-print(TXT_DIGITS_LIST)
+print(TXT_DIGITS_RECOGNIZED)
 print(", ".join([str(i) for i in digits_array]))

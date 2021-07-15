@@ -1,10 +1,7 @@
 import librosa.display
-import scipy
-import soundfile as sf
-import scipy.signal as sg
 import noisereduce as nr
+import soundfile as sf
 
-from constants import *
 from plots import *
 
 

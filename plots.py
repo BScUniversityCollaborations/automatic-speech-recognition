@@ -1,9 +1,8 @@
 import librosa
 import librosa.display
 import numpy as np
-import scipy.signal as sg
 from matplotlib import pyplot as plt
-from numpy.lib import stride_tricks
+
 from constants import *
 
 
