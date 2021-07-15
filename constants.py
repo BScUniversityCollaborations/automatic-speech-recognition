@@ -1,8 +1,11 @@
+from termcolor import colored
+
+
 # region Lang
 # Console
 TXT_INPUT_FILE = "Enter sound file path:\n"
-TXT_FILE_NOT_FOUND = "File not found at:\n"
-TXT_FILE_WRONG_EXTENSION = "Wrong file extension. Please try again!\n"
+TXT_FILE_NOT_FOUND = colored("File not found at:\n", "red")
+TXT_FILE_WRONG_EXTENSION = colored("Wrong file extension. Please try again!", "red")
 TXT_PRE_PROCESSING_STATISTICS = "PRE-PROCESSING STATISTICS:"
 TXT_AUDIO_ORIGINAL_DURATION_FORMAT = "- Original Audio Duration: {} sec."
 TXT_AUDIO_FILTERED_DURATION_FORMAT = "- Audio (Filtered) Duration: {} sec."

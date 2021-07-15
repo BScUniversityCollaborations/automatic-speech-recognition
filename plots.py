@@ -26,7 +26,8 @@ def show_plots_compare_two_signals(signal_data, signal_data_reduced):
     # Show plot
     plt.show()
 
-    # fig.savefig("test.png")
+    # Save plot to directory
+    fig.savefig(".\\data\\plots\\original_and_filtered_audio.png")
 
 
 def show_plot_emphasized(signal_data_orig, signal_data_emphasized):
@@ -48,6 +49,9 @@ def show_plot_emphasized(signal_data_orig, signal_data_emphasized):
     # Show plot
     plt.show()
 
+    # Save plot to directory
+    fig.savefig(".\\data\\plots\\original_and_pre_emphasis.png")
+
 
 def show_plot_zcr(signal_data_zcr):
     plt.plot(signal_data_zcr[0])
@@ -56,6 +60,10 @@ def show_plot_zcr(signal_data_zcr):
     plt.title(TXT_ZERO_CROSSING_RATE)
     # Apply grid
     plt.grid()
+
+    # Save plot to directory
+    plt.savefig(".\\data\\plots\\zero_crossing_rate.png")
+
     # Zooming in
     plt.figure(figsize=(14, 5))
 
@@ -72,4 +80,8 @@ def show_plot_short_time_energy(signal_data_original, signal_data_ste):
     plt.title(TXT_SHORT_TIME_ENERGY)
     plt.xlabel(TXT_TIME)
 
+    # Save plot to directory
+    plt.savefig(".\\data\\plots\\short_time_energy.png")
+
+    # Show the plot
     plt.show()

@@ -3,20 +3,27 @@
 import os
 import sys
 
-import utils
 from utils import *
 
-# Get the sound file path from the user
-file_path = input(TXT_INPUT_FILE)
+root = ""
+while True:
+    # Get the sound file path from the user
+    file_path = input(TXT_INPUT_FILE)
 
-# Check if file exists
-if os.path.exists(file_path) is False:
-    sys.exit(TXT_FILE_NOT_FOUND + str(file_path))
+    # Check if file exists
+    if os.path.exists(file_path) is False:
+        print(TXT_FILE_NOT_FOUND + str(file_path))
+        print()
+        continue  # Return to the start of the loop
 
-# Check if file is mp3 or wav
-root, extension = os.path.splitext(file_path)
-if extension not in AUDIO_WAV_EXTENSION:
-    sys.exit(TXT_FILE_WRONG_EXTENSION + str(file_path))
+    # Check if file is mp3 or wav
+    root, extension = os.path.splitext(file_path)
+    if extension not in AUDIO_WAV_EXTENSION:
+        print(TXT_FILE_WRONG_EXTENSION + str(file_path))
+        print()
+        continue  # Return to the start of the loop
+
+    break
 
 # Load the file from path, then get the signal and sample rate.
 signal, sr = librosa.load(file_path, sr=DEFAULT_SAMPLE_RATE)
