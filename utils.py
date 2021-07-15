@@ -77,7 +77,6 @@ def digits_segmentation(signal_nparray):
     signal_reverse = signal_nparray[::-1]
 
     frame_length = round(WINDOW_LENGTH * DEFAULT_SAMPLE_RATE)
-    win_hop = round(WINDOW_HOP * DEFAULT_SAMPLE_RATE)
 
     frames = librosa.onset.onset_detect(signal_nparray, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length, backtrack=True)
     times = librosa.frames_to_time(frames, sr=DEFAULT_SAMPLE_RATE, hop_length=frame_length)
@@ -110,10 +109,10 @@ def digits_segmentation(signal_nparray):
             i = i - 1
         i = i + 1
 
-    merged_onset_times = [*times, *times_reverse]
-    merged_onset_times = sorted(merged_onset_times)
+    merged_times = [*times, *times_reverse]
+    merged_times = sorted(merged_times)
 
-    samples = librosa.time_to_samples(merged_onset_times, sr=DEFAULT_SAMPLE_RATE)
+    samples = librosa.time_to_samples(merged_times, sr=DEFAULT_SAMPLE_RATE)
 
     return samples
 
@@ -125,11 +124,9 @@ def digit_recognition(signal_data, samples):
     digit = {}
     while i < len(samples):
         if i == len(samples) - 1 and len(samples) % 2 == 1:
-            digit[count_digits] = signal_data[samples[i - 1]:samples[
-                i]]
+            digit[count_digits] = signal_data[samples[i - 1]:samples[i]]
         else:
-            digit[count_digits] = signal_data[samples[i]:samples[
-                i + 1]]
+            digit[count_digits] = signal_data[samples[i]:samples[i + 1]]
         count_digits += 1
         i += 2
 
