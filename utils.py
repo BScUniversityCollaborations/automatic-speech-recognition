@@ -84,10 +84,13 @@ def digits_segmentation(signal_nparray):
                                                 backtrack=True)
     times_reverse = librosa.frames_to_time(frames_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
 
-    i = 0
-    while i < len(times_reverse) - 1:
+    # i = 0
+    # while i < len(times_reverse) - 1:
+    #     times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
+    #     i += 1
+
+    for i in range(0, len(times_reverse) - 1):
         times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
-        i += 1
 
     times_reverse = sorted(times_reverse)
 
@@ -107,6 +110,29 @@ def digits_segmentation(signal_nparray):
             i = i - 1
         i = i + 1
 
+    # TODO FIX CODE TOMORROW...maybe
+    # times_reverse = sorted(times_reverse)
+    # # range(start_from, stop_at, step_size)
+    # i = 0
+    # print("!111111111111")
+    # for i in range(0, len(times_reverse)-1):
+    #     print("first i:", str(i))
+    #     print("fsdafsadfasdfas")
+    #     if times_reverse[i + 1] - times_reverse[i] > 1:
+    #         times_reverse = np.delete(times_reverse, i)
+    #         i -= 1
+    #     i = i + 1
+    #
+    # i = 0
+    # for i in range(0, len(times) - 1):
+    #     print("sec i:", str(i))
+    #     if times[i + 1] - times[i] < 1:
+    #         times = np.delete(times, i + 1)
+    #         frames = np.delete(frames, i + 1)
+    #         samples = np.delete(samples, i + 1)
+    #         i = i - 1
+    #     i = i + 1
+
     merged_times = [*times, *times_reverse]
     merged_times = sorted(merged_times)
 
@@ -116,7 +142,6 @@ def digits_segmentation(signal_nparray):
 
 
 def digit_recognition(signal_data, samples):
-    i = 0
     # number of valid digits from onset detection todo
     count_digits = 0
     digit = {}
@@ -129,7 +154,7 @@ def digit_recognition(signal_data, samples):
         else:
             digit[count_digits] = signal_data[samples[i]:samples[i + 1]]
         count_digits += 1
-
+    print("the digits boss is: ", count_digits)
     return digit
 
 
