@@ -34,6 +34,8 @@ signal, sr = librosa.load(file_path, sr=DEFAULT_SAMPLE_RATE)
 # === Start Pre-Processing ===
 pre_proceed_signal = pre_processing(signal, os.path.basename(root))
 
+print("Finding digits...")
+
 # === Start digit segmentation ===
 samples = digits_segmentation(pre_proceed_signal)
 
@@ -44,11 +46,13 @@ digits_array = valid_digits(pre_proceed_signal, samples)
 dataset_training_signals = get_training_samples_signal()
 
 # === Display words a list of words found ===
-recognized_digits = recognition(digits_array,
-                                pre_proceed_signal,
-                                dataset_training_signals)
+recognized_digits = recognition(digits=digits_array,
+                                signal_data=pre_proceed_signal,
+                                dataset=dataset_training_signals)
+
 print(TXT_DIGITS_FOUND.format(len(digits_array)))
 # Prints the list that contains all the words found and separates each word
 # with a ", " excluding the last one.
-print("\n", TXT_DIGITS_RECOGNIZED)
-print(", ".join([str(i) for i in recognized_digits]))
+print()
+print(TXT_DIGITS_RECOGNIZED)
+print(", ".join([str(i) for i in digits_array]))

@@ -2,6 +2,7 @@ import math
 
 import librosa.display
 import noisereduce as nr
+import numpy as np
 import soundfile as sf
 import scipy.signal as sg
 from sklearn.model_selection import train_test_split
@@ -95,11 +96,6 @@ def digits_segmentation(signal_nparray):
     frames_reverse = librosa.onset.onset_detect(signal_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
     times_reverse = librosa.frames_to_time(frames_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
 
-    # i = 0
-    # while i < len(times_reverse) - 1:
-    #     times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
-    #     i += 1
-
     for i in range(0, len(times_reverse) - 1):
         times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
         i += 1
@@ -141,7 +137,6 @@ def valid_digits(signal_data, samples):
 
     # range(start_from, stop_at, step_size)
     for i in range(0, len(samples), 2):
-        print(i)
         if len(samples) % 2 == 1 and i == len(samples) - 1:
             digit[count_digits] = signal_data[samples[i - 1]:samples[i]]
         else:
@@ -156,7 +151,7 @@ def recognition(digits, signal_data, dataset):
     # Parameters:
     #   digits: An array containing integer digits.
     #   signal_data: A nparray with the original signal for comparison.
-    #   dataset: todo
+    #   dataset: An array with all training signals.
 
     # Init an array that will contain our recognized digits in string.
     recognized_digits_array = []
@@ -175,7 +170,7 @@ def recognition(digits, signal_data, dataset):
         # 0-9 from training set
         for i in range(len(dataset)):
             # We basically filter the training dataset as well.
-            dataset[i] = filter_dataset_signal(dataset[i])
+            dataset[i] = filter_dataset_signal(dataset[i].astype(np.float))
 
             # MFCC for each digit from the training set
             mfcc = librosa.feature.mfcc(y=dataset[i],
@@ -206,24 +201,25 @@ def recognition(digits, signal_data, dataset):
 
 
 def get_training_samples_signal():
-
     # Initialize an array to append the signals of the training samples.
-    training_samples_signals = []
+    training_samples_signals = {}
 
+    index = 0
     # Loop between a range of 0-9, 0 in range(10) is 0 to 9 in python.
     for i in range(10):
         # Loop between the labels, s1 means sample1 and so on.
         for name in DATASET_SPLIT_LABELS:
             # Load the signal and add it to our array.
-            training_samples_signals.append(librosa.load(".\\data\\training\\"
-                                                         + str(i)
-                                                         + "_"
-                                                         + name
-                                                         + AUDIO_WAV_EXTENSION,
-                                                         sr=DEFAULT_SAMPLE_RATE))
+            training_samples_signals[index], _ = librosa.load(".\\data\\training\\"
+                                                              + str(i)
+                                                              + "_"
+                                                              + name
+                                                              + AUDIO_WAV_EXTENSION,
+                                                              sr=DEFAULT_SAMPLE_RATE)
 
-    print(training_samples_signals)
-    return np.array(training_samples_signals)
+    index += 1
+
+    return training_samples_signals
 
 
 def filter_dataset_signal(signal_data):
@@ -245,36 +241,4 @@ def filter_dataset_signal(signal_data):
     return signal_filtered
 
 
-def k_fold_cross_validation(labels, mfccs):
-    # === K-Fold Cross Validation of training ===
-    # Parameters:
-    #   labels: todo
-    #   mfccs: todo
 
-    # todo check if test size...
-    trainings, testings = train_test_split(labels, test_size=0.3, shuffle=True)
-
-    # Init a all-ones matrix with the same row & column length of labels (ex: 30x30).
-    all_ones_matrix = np.ones(
-        len(labels), len(labels)
-    ) * -1
-
-    score = 0.0
-    for test in range(len(testings)):
-        x = mfccs[test]
-        d_min, j_min = math.inf, -1
-
-        for training in range(len(trainings)):
-            y = mfccs[training]
-            d = all_ones_matrix[test, training]
-
-            if d.all() == -1:
-                d = librosa.sequence.dtw(x, y)
-
-            if d.all() < d_min:
-                d_min = d
-                j_min = training
-
-        score += 1.0 if (labels[test] == labels[j_min]) else 0.0
-
-    print('Rec rate {}%'.format(100. * score / len(testings)))
