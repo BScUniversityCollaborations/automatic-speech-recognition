@@ -153,7 +153,6 @@ def recognition(digits, signal_data, dataset):
         cost_matrix_new = []
         mfccs = []
 
-        #
         mfcc_digit = librosa.feature.mfcc(y=digit,
                                           S=signal_data,
                                           sr=DEFAULT_SAMPLE_RATE,
@@ -221,11 +220,6 @@ def filter_dataset_signal(signal_data):
     # Parameters:
     #   signal_data: A nparray with the signal.
 
-    # Remove the background noise from the audio file.
-    signal_reduced_noise = remove_noise(signal_data)
-
-    # Remove the silent parts of the audio that are less than 40dB
-    signal_filtered, _ = librosa.effects.trim(signal_reduced_noise, TOP_DB)
     # Remove the background noise from the audio file.
     signal_reduced_noise = remove_noise(signal_data)
 
