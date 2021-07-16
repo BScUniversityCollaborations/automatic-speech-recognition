@@ -41,7 +41,6 @@ samples = digits_segmentation(pre_proceed_signal)
 digits_array = digit_recognition(pre_proceed_signal, samples)
 
 
-
 # === Display words a list of words found ===
 # Prints the list that contains all the words found and separates each word
 # with a ", " excluding the last one.
