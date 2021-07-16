@@ -102,9 +102,6 @@ def show_mel_spectrogram(signal_nparray, num):
                              y_axis='mel')
     plt.colorbar(format="%+2.0f dB")
 
-    # Save plot to directory
-    plt.savefig(".\\data\\plots\\" + num + "_mel_spectrogram.png")
-
     # Zooming in
     plt.figure(figsize=(14, 5))
 

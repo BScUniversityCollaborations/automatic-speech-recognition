@@ -1,11 +1,7 @@
-import math
-
 import librosa.display
 import noisereduce as nr
-import numpy as np
-import soundfile as sf
 import scipy.signal as sg
-from sklearn.model_selection import train_test_split
+import soundfile as sf
 
 from plots import *
 
@@ -131,11 +127,9 @@ def valid_digits(signal_data, samples):
     #   signal_data: An nparray with the signal.
     #   samples: An ndarray that contains integers.
 
-    # todo change this: number of valid digits from onset detection
     count_digits = 0
     digit = {}
 
-    # range(start_from, stop_at, step_size)
     for i in range(0, len(samples), 2):
         if len(samples) % 2 == 1 and i == len(samples) - 1:
             digit[count_digits] = signal_data[samples[i - 1]:samples[i]]
