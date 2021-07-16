@@ -95,9 +95,12 @@ def digits_segmentation(signal_nparray):
     frames_reverse = librosa.onset.onset_detect(signal_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
     times_reverse = librosa.frames_to_time(frames_reverse, sr=DEFAULT_SAMPLE_RATE, hop_length=FRAME_LENGTH)
 
-    # todo change the variable i name to be more accurate
-    i = 0
-    while i < len(times_reverse) - 1:
+    # i = 0
+    # while i < len(times_reverse) - 1:
+    #     times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
+    #     i += 1
+
+    for i in range(0, len(times_reverse) - 1):
         times_reverse[i] = WINDOW_LENGTH - times_reverse[i]
         i += 1
 
