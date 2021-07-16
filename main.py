@@ -38,12 +38,17 @@ pre_proceed_signal = pre_processing(signal, os.path.basename(root))
 samples = digits_segmentation(pre_proceed_signal)
 
 # === Feature extraction & word recognition ===
-digits_array = digit_recognition(pre_proceed_signal, samples)
+digits_array = valid_digits(pre_proceed_signal, samples)
 
+# === Get training samples in signal form ===
+dataset_training_signals = get_training_samples_signal()
 
 # === Display words a list of words found ===
+recognized_digits = recognition(digits_array,
+                                pre_proceed_signal,
+                                dataset_training_signals)
+print(TXT_DIGITS_FOUND.format(len(digits_array)))
 # Prints the list that contains all the words found and separates each word
 # with a ", " excluding the last one.
-print(TXT_DIGITS_FOUND.format(len(digits_array)))
 print("\n", TXT_DIGITS_RECOGNIZED)
-print(", ".join([str(i) for i in digits_array]))
+print(", ".join([str(i) for i in recognized_digits]))

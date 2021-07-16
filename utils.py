@@ -127,12 +127,12 @@ def digits_segmentation(signal_nparray):
     return samples
 
 
-def digit_recognition(signal_data, samples):
+def valid_digits(signal_data, samples):
     # Parameters:
     #   signal_data: An nparray with the signal.
     #   samples: An ndarray that contains integers.
 
-    # todo change this number of valid digits from onset detection
+    # todo change this: number of valid digits from onset detection
     count_digits = 0
     digit = {}
 
@@ -162,17 +162,17 @@ def recognition(digits, signal_data, dataset):
         mfccs = []
 
         #
-        mfcc_input = librosa.feature.mfcc(y=digit,
+        mfcc_digit = librosa.feature.mfcc(y=digit,
                                           S=signal_data,
                                           sr=DEFAULT_SAMPLE_RATE,
                                           hop_length=FRAME_LENGTH,
                                           n_mfcc=13)
-        mfcc_input_mag = librosa.amplitude_to_db(abs(mfcc_input))
+        mfcc_digit_mag = librosa.amplitude_to_db(abs(mfcc_digit))
 
         # 0-9 from training set
         for i in range(len(dataset)):
             # We basically filter the training dataset as well.
-            dataset[i] = filter_signal(dataset[i])
+            dataset[i] = filter_dataset_signal(dataset[i])
 
             # MFCC for each digit from the training set
             mfcc = librosa.feature.mfcc(y=dataset[i],
@@ -185,7 +185,7 @@ def recognition(digits, signal_data, dataset):
             mfcc_mag = librosa.amplitude_to_db(abs(mfcc))
 
             # apply dtw
-            cost_matrix, wp = librosa.sequence.dtw(X=mfcc_input_mag, Y=mfcc_mag)
+            cost_matrix, wp = librosa.sequence.dtw(X=mfcc_digit_mag, Y=mfcc_mag)
 
             # make a list with minimum cost of each digit
             cost_matrix_new.append(cost_matrix[-1, -1])
@@ -194,7 +194,10 @@ def recognition(digits, signal_data, dataset):
         # index of MINIMUM COST
         index_min_cost = cost_matrix_new.index(min(cost_matrix_new))
 
-        show_mel_spectrogram()
+        recognized_digits_array.append(DATASET_SPLIT_LABELS[index_min_cost])
+
+        for i in dataset:
+            show_mel_spectrogram(dataset[i], DATASET_SPLIT_LABELS[index_min_cost])
 
     return recognized_digits_array
 
@@ -208,18 +211,19 @@ def get_training_samples_signal():
     for i in range(10):
         # Loop between the labels, s1 means sample1 and so on.
         for name in DATASET_SPLIT_LABELS:
-            # Add the signal to our array.
-            training_samples_signals.append(librosa.load("\\data\\training\\"
-                                                         + str(i + 1)
+            # Load the signal and add it to our array.
+            training_samples_signals.append(librosa.load(".\\data\\training\\"
+                                                         + str(i)
                                                          + "_"
                                                          + name
                                                          + AUDIO_WAV_EXTENSION,
                                                          sr=DEFAULT_SAMPLE_RATE))
 
-    return training_samples_signals
+    print(training_samples_signals)
+    return np.array(training_samples_signals)
 
 
-def filter_signal(signal_data):
+def filter_dataset_signal(signal_data):
     # === Filtering ===
     # Parameters:
     #   signal_data: A nparray with the signal.
